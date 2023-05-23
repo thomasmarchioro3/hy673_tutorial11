@@ -98,7 +98,7 @@ class Decoder(nn.Module):
         u3 = self.up3(u2, d2)
         u4 = self.up4(u3, d1)
         eps_hat = self.out(torch.cat([u4, x_f], dim=1))
-        return u1, u2, u3, u4, eps_hat
+        return eps_hat
     
 # Time embedding layer
 class TimeEmbedding(nn.Module):
@@ -130,6 +130,6 @@ class Unet(nn.Module):
         x_f, d1, d2, d3, latent = self.encoder(x)
         temb = self.time_embedding_layer(t)
         latent_temb = latent + temb
-        _, _, _, _, eps_hat = self.decoder(latent_temb, d3, d2, d1, x_f)  # intermediate decoder steps are not needed
-
+        eps_hat = self.decoder(latent_temb, d3, d2, d1, x_f)  # intermediate decoder steps are not needed
+        
         return eps_hat
